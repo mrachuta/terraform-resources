@@ -1,5 +1,5 @@
-resource "google_compute_firewall" "rule_lb_hc" {
-  name      = "${var.network_name}-allow-lb-hc-to-mig"
+resource "google_compute_firewall" "rule_ingress_allow_lb_hc" {
+  name      = "${var.network_name}-ingress-allow-lb-hc"
   direction = "INGRESS"
   network   = var.network_name
 
@@ -14,8 +14,8 @@ resource "google_compute_firewall" "rule_lb_hc" {
   }
 }
 
-resource "google_compute_firewall" "rule_lb_client" {
-  name      = "${var.network_name}-allow-client-to-lb"
+resource "google_compute_firewall" "rule_ingress_allow_client_to_lb" {
+  name      = "${var.network_name}-ingress-allow-client-to-lb"
   direction = "INGRESS"
   network   = var.network_name
 
@@ -24,15 +24,19 @@ resource "google_compute_firewall" "rule_lb_client" {
   ]
 
   destination_ranges = [
-    "${google_compute_forwarding_rule.default.ip_address}/32"
+    "${google_compute_forwarding_rule.external_lb.ip_address}/32"
   ]
 
   depends_on = [
-    google_compute_forwarding_rule.default
+    google_compute_forwarding_rule.external_lb
   ]
 
   allow {
     protocol = "tcp"
-    ports    = ["80"]
+    # Use compact() to remove null and empty values
+    ports = compact([
+      var.http_port,
+      var.https_port
+    ])
   }
 }

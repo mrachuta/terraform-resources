@@ -1,3 +1,8 @@
+variable "project_name" {
+  type    = string
+  default = "myproject"
+}
+
 variable "mig_region" {
   type    = string
   default = "us-central1"
@@ -41,6 +46,36 @@ variable "mig_additional_tags" {
 variable "mig_additional_labels" {
   type    = map(string)
   default = {}
+}
+
+variable "mig_disk_encryption" {
+  type    = bool
+  default = false
+}
+
+variable "mig_disk_kms_key_path" {
+  type    = string
+  default = null
+}
+
+variable "nginx_bucket_name" {
+  type    = string
+  default = "none"
+}
+
+variable "site_name" {
+  type    = string
+  default = "example.com"
+}
+
+variable "http_port" {
+  type    = number
+  default = 80
+}
+
+variable "https_port" {
+  type    = number
+  default = null
 }
 
 variable "network_name" {

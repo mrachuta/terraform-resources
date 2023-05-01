@@ -1,6 +1,6 @@
 resource "google_compute_router" "router" {
   name    = "${var.network_name}-router"
-  region  = data.google_client_config.current.region
+  region  = var.mig_region
   network = var.network_name
 
   bgp {
