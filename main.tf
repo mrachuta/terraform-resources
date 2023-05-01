@@ -1,5 +1,5 @@
 module "gcp_webserver_bucket" {
-  source = "../modules/gcp-webserver-bucket-module"
+  source = "./modules/gcp-webserver-bucket-module"
 
   bucket_name          = "test-stack-nginx-bucket"
   bucket_region        = "us-central1"
@@ -32,7 +32,7 @@ module "gcp_webserver_bucket" {
 }
 
 module "gcp_webserver_mig" {
-  source = "../modules/gcp-webserver-mig-module"
+  source = "./modules/gcp-webserver-mig-module"
 
   project_name                    = "kr-free-2023"
   mig_region                      = "us-central1"
@@ -62,7 +62,7 @@ module "gcp_webserver_mig" {
 
 module "gcp_lb" {
 
-  source = "../modules/gcp-loadbalancer-module"
+  source = "./modules/gcp-loadbalancer-module"
 
   lb_region    = "us-central1"
   lb_name      = "test-stack-lb"
