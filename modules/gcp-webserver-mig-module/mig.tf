@@ -93,7 +93,8 @@ resource "google_compute_instance_template" "mig_template" {
   }
 
   depends_on = [
-    google_compute_subnetwork.mig_subnetwork
+    google_compute_subnetwork.mig_subnetwork,
+    google_kms_crypto_key_iam_binding.crypto_key
   ]
 
   lifecycle {

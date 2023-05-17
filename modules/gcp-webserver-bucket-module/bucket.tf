@@ -18,4 +18,8 @@ resource "google_storage_bucket" "nginx_bucket" {
       default_kms_key_name = var.bucket_kms_key_path
     }
   }
+
+  depends_on = [
+    google_kms_crypto_key_iam_binding.crypto_key
+  ]
 }
