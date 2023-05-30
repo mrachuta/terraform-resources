@@ -33,9 +33,19 @@ variable "mig_description" {
   default = "Example MIG"
 }
 
+variable "mig_image" {
+  type    = string
+  default = "debian-cloud/debian-11"
+}
+
 variable "mig_size" {
   type    = string
   default = "3"
+}
+
+variable "mig_startup_script" {
+  type    = string
+  default = null
 }
 
 variable "mig_additional_tags" {
@@ -60,12 +70,12 @@ variable "mig_disk_kms_key_path" {
 
 variable "nginx_bucket_name" {
   type    = string
-  default = "none"
+  default = null
 }
 
 variable "site_name" {
   type    = string
-  default = "example.com"
+  default = null
 }
 
 variable "http_port" {
@@ -81,4 +91,9 @@ variable "https_port" {
 variable "network_name" {
   type    = string
   default = "example-network"
+}
+
+variable "network_ip_range" {
+  type    = string
+  default = "10.0.1.0/24"
 }

@@ -4,7 +4,7 @@ resource "google_compute_firewall" "rule_ingress_allow_internal_all" {
   network   = var.network_name
 
   source_ranges = [
-    "10.0.1.0/24"
+    var.network_ip_range
   ]
 
   allow {
@@ -30,7 +30,7 @@ resource "google_compute_firewall" "rule_egress_allow_internal_all" {
   network   = var.network_name
 
   source_ranges = [
-    "10.0.1.0/24",
+    var.network_ip_range
   ]
 
   allow {

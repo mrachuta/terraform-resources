@@ -6,22 +6,13 @@ resource "google_service_account" "mig_service_account" {
 }
 
 resource "google_project_iam_binding" "mig_service_account_bucket_reader_role" {
+  count   = var.nginx_bucket_name != null ? 1 : 0
   project = var.project_name
   role    = "roles/storage.objectViewer"
   members = [
     "serviceAccount:${google_service_account.mig_service_account.email}",
   ]
 }
-
-# Not required
-# resource "google_kms_key_ring_iam_binding" "key_ring" {
-#   count         = var.mig_disk_encryption ? 1 : 0 
-#   key_ring_id = split("/cryptoKeys/", var.mig_disk_kms_key_path)[0]
-#   role        = "roles/owner"
-#   members = [
-#     "serviceAccount:${google_service_account.mig_service_account.email}",
-#   ]
-# }
 
 resource "google_kms_crypto_key_iam_binding" "crypto_key" {
   count         = var.mig_disk_encryption ? 1 : 0

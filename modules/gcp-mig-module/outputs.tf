@@ -5,3 +5,11 @@ output "instance_group_output" {
 output "network_name_output" {
   value = google_compute_network.vpc_network.name
 }
+
+output "http_port_output" {
+  value = var.http_port != null ? var.http_port : null
+}
+
+output "https_port_output" {
+  value = var.https_port != null ? var.https_port : null
+}

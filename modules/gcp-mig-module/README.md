@@ -1,6 +1,6 @@
 # General info
 
-Terraform module to create MIG with preinstalled nginx.
+Terraform module to create MIG.
 
 # Requirements
 
