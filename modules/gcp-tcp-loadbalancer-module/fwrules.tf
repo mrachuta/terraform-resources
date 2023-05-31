@@ -41,31 +41,3 @@ resource "google_compute_firewall" "rule_ingress_allow_client_to_external_lb" {
     ])
   }
 }
-
-resource "google_compute_firewall" "rule_ingress_allow_client_to_internal_lb" {
-  count     = var.external_lb == true ? 0 : 1
-  name      = "${var.network_name}-ingress-allow-client-to-internal-lb"
-  direction = "INGRESS"
-  network   = var.network_name
-
-  source_ranges = [
-    "0.0.0.0/0"
-  ]
-
-  destination_ranges = [
-    "${google_compute_forwarding_rule.internal_lb[0].ip_address}/32"
-  ]
-
-  depends_on = [
-    google_compute_forwarding_rule.internal_lb
-  ]
-
-  allow {
-    protocol = "tcp"
-    # Use compact() to remove null and empty values
-    ports = compact([
-      var.http_port,
-      var.https_port
-    ])
-  }
-}

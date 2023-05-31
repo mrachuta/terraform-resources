@@ -1,15 +1,14 @@
 module "gcp_webserver_bucket" {
   source = "./modules/gcp-webserver-bucket-module"
 
-  bucket_name          = "test-stack-nginx-bucket"
-  bucket_region        = "us-central1"
-  bucket_encryption    = true
-  bucket_kms_key_path  = "projects/kr-free-2023/locations/us-central1/keyRings/kr-free-2003-keyring/cryptoKeys/cloudStorageKey"
-
-  site_name            = "mysite.com"
-  http_port            = 8080
-  https_port           = 8443
-  generate_cert        = true
+  bucket_name         = "test-stack-nginx-bucket"
+  bucket_region       = "us-central1"
+  bucket_encryption   = true
+  bucket_kms_key_path = "projects/kr-free-2023/locations/us-central1/keyRings/kr-free-2003-keyring/cryptoKeys/cloudStorageKey"
+  site_name           = "mysite.com"
+  http_port           = 8080
+  https_port          = 8443
+  generate_cert       = true
   additional_dns_names = [
     "www.mysite.co.uk",
     "mysite.co.uk"
@@ -87,7 +86,8 @@ module "gcp_mig" {
     sudo systemctl restart nginx
     EOF
 
-  network_name = "test-network"
+  network_name    = "test-network"
+  subnetwork_name = "subnet-mig-01"
 
   depends_on = [
     module.gcp_webserver_bucket
@@ -98,15 +98,13 @@ module "gcp_lb" {
 
   source = "./modules/gcp-tcp-loadbalancer-module"
 
-  lb_region       = "us-central1"
-  lb_name         = "test-stack-lb"
-  external_lb     = true
-  mig_name        = module.gcp_mig.instance_group_output
-  network_name    = module.gcp_mig.network_name_output
-  ## Required for internal_lb
-  #subnetwork_name = module.gcp_mig.subnetwork_name_output
-  http_port       = module.gcp_mig.http_port_output
-  https_port      = module.gcp_mig.https_port_output
+  lb_region    = "us-central1"
+  lb_name      = "test-stack-lb"
+  external_lb  = true
+  mig_name     = module.gcp_mig.instance_group_output
+  network_name = module.gcp_mig.network_name_output
+  http_port    = module.gcp_mig.http_port_output
+  https_port   = module.gcp_mig.https_port_output
 
   depends_on = [
     module.gcp_mig

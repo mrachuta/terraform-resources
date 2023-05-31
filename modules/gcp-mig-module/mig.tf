@@ -26,7 +26,7 @@ resource "google_compute_instance_template" "mig_template" {
   )
 
   instance_description = var.mig_description
-  machine_type         = "e2-medium"
+  machine_type         = var.mig_machine_type
   can_ip_forward       = false
 
   scheduling {
@@ -47,8 +47,19 @@ resource "google_compute_instance_template" "mig_template" {
     }
   }
 
+  # Main network
   network_interface {
-    subnetwork = "${var.network_name}-mig-subnet"
+    network    = google_compute_network.vpc_network.name
+    subnetwork = google_compute_subnetwork.mig_subnetwork.name
+  }
+
+  # Additional networks
+  dynamic "network_interface" {
+    for_each = var.additional_networks
+    content {
+      network    = network_interface.value.network_name
+      subnetwork = network_interface.value.subnetwork_name
+    }
   }
 
   metadata = merge(

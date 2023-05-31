@@ -13,6 +13,11 @@ variable "mig_zone" {
   default = "us-central1-b"
 }
 
+variable "mig_machine_type" {
+  type    = string
+  default = "e2-medium"
+}
+
 variable "mig_service_account_id" {
   type    = string
   default = "example-mig-sa"
@@ -91,6 +96,21 @@ variable "https_port" {
 variable "network_name" {
   type    = string
   default = "example-network"
+}
+
+variable "subnetwork_name" {
+  type    = string
+  default = "example-subnetwork"
+}
+
+variable "additional_networks" {
+  type = map(object(
+    {
+      network_name    = string
+      subnetwork_name = string
+    }
+  ))
+  default = {}
 }
 
 variable "network_ip_range" {

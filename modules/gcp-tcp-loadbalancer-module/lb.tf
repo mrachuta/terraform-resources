@@ -4,10 +4,11 @@ resource "google_compute_forwarding_rule" "external_lb" {
   region                = var.lb_region
   load_balancing_scheme = "EXTERNAL"
   backend_service       = google_compute_region_backend_service.lb_backend.id
-  ports                 = compact([
-                            var.http_port,
-                            var.https_port
-                          ])  
+
+  ports = compact([
+    var.http_port,
+    var.https_port
+  ])
 
   depends_on = [
     google_compute_region_backend_service.lb_backend
@@ -21,12 +22,13 @@ resource "google_compute_forwarding_rule" "internal_lb" {
   region                = var.lb_region
   load_balancing_scheme = "INTERNAL"
   backend_service       = google_compute_region_backend_service.lb_backend.id
-  ports                 = compact([
-                            var.http_port,
-                            var.https_port
-                          ])
   network               = var.network_name
   subnetwork            = var.subnetwork_name
+
+  ports = compact([
+    var.http_port,
+    var.https_port
+  ])
 
   depends_on = [
     google_compute_region_backend_service.lb_backend
