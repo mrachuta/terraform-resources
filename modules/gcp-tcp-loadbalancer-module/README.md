@@ -1,6 +1,6 @@
 # General info
 
-Terraform module to create external loadbalancer basing on existing MIG
+Terraform module to create loadbalancer (internal or external) basing on existing MIG
 
 # Requirements
 

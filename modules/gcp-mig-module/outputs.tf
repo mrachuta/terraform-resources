@@ -6,6 +6,10 @@ output "network_name_output" {
   value = google_compute_network.vpc_network.name
 }
 
+output "subnetwork_name_output" {
+  value = google_compute_subnetwork.mig_subnetwork.name
+}
+
 output "http_port_output" {
   value = var.http_port != null ? var.http_port : null
 }

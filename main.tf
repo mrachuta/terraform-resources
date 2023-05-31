@@ -96,14 +96,17 @@ module "gcp_mig" {
 
 module "gcp_lb" {
 
-  source = "./modules/gcp-loadbalancer-module"
+  source = "./modules/gcp-tcp-loadbalancer-module"
 
-  lb_region    = "us-central1"
-  lb_name      = "test-stack-lb"
-  mig_name     = module.gcp_mig.instance_group_output
-  network_name = module.gcp_mig.network_name_output
-  http_port    = module.gcp_mig.http_port_output
-  https_port   = module.gcp_mig.https_port_output
+  lb_region       = "us-central1"
+  lb_name         = "test-stack-lb"
+  external_lb     = true
+  mig_name        = module.gcp_mig.instance_group_output
+  network_name    = module.gcp_mig.network_name_output
+  ## Required for internal_lb
+  #subnetwork_name = module.gcp_mig.subnetwork_name_output
+  http_port       = module.gcp_mig.http_port_output
+  https_port      = module.gcp_mig.https_port_output
 
   depends_on = [
     module.gcp_mig

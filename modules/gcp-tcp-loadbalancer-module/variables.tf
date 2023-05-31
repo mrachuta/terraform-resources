@@ -8,6 +8,11 @@ variable "lb_name" {
   default = "example-lb"
 }
 
+variable "external_lb" {
+  type    = bool
+  default = true
+}
+
 variable "mig_name" {
   type    = string
   default = "example-mig"
@@ -16,6 +21,11 @@ variable "mig_name" {
 variable "network_name" {
   type    = string
   default = "example-network"
+}
+
+variable "subnetwork_name" {
+  type    = string
+  default = null
 }
 
 variable "http_port" {
