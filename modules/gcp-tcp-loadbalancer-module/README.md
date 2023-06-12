@@ -4,8 +4,7 @@ Terraform module to create loadbalancer (internal or external) basing on existin
 
 # Requirements
 
-Existing MIG  
-Hint: you can use *gcp-mig-module *to create MIG
+Existing MIG
 
 # Usage
 

@@ -1,5 +1,11 @@
+locals {
+  rule_prefix = length(
+    regexall("^projects/.*/global/networks/.*$", var.network_name)
+  ) > 0 ? element(split("/", var.network_name), 4) : var.network_name
+}
+
 resource "google_compute_firewall" "rule_ingress_allow_lb_hc" {
-  name      = "${var.network_name}-ingress-allow-lb-hc"
+  name      = "${local.rule_prefix}-in-a-lb-hc-to-${var.lb_name}"
   direction = "INGRESS"
   network   = var.network_name
 
@@ -16,7 +22,7 @@ resource "google_compute_firewall" "rule_ingress_allow_lb_hc" {
 
 resource "google_compute_firewall" "rule_ingress_allow_client_to_external_lb" {
   count     = var.external_lb == true ? 1 : 0
-  name      = "${var.network_name}-ingress-allow-client-to-external-lb"
+  name      = "${local.rule_prefix}-in-a-client-to-${var.lb_name}"
   direction = "INGRESS"
   network   = var.network_name
 

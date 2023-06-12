@@ -26,7 +26,7 @@ output "lb_ip_output_clickable_https" {
   value = var.external_lb == true ? (
     var.https_port != null ? (
       var.https_port == 443 ? (
-        "http://${google_compute_forwarding_rule.external_lb[0].ip_address}/"
+        "https://${google_compute_forwarding_rule.external_lb[0].ip_address}/"
         ) : (
         "https://${google_compute_forwarding_rule.external_lb[0].ip_address}:${var.https_port}/"
       )
@@ -34,7 +34,7 @@ output "lb_ip_output_clickable_https" {
     ) : (
     var.https_port != null ? (
       var.https_port == 443 ? (
-        "http://${google_compute_forwarding_rule.internal_lb[0].ip_address}/"
+        "https://${google_compute_forwarding_rule.internal_lb[0].ip_address}/"
         ) : (
         "https://${google_compute_forwarding_rule.internal_lb[0].ip_address}:${var.https_port}/"
       )

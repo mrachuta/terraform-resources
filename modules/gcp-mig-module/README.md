@@ -4,7 +4,7 @@ Terraform module to create MIG.
 
 # Requirements
 
-No special requirements.
+Existing service account.
 
 # Usage
 

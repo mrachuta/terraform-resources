@@ -5,6 +5,12 @@ locals {
   } : {}
 }
 
+data "google_compute_image" "mig_image" {
+  count   = var.mig_image_family_link != null ? 1 : 0
+  family  = split("/", var.mig_image_family_link)[5]
+  project = split("/", var.mig_image_family_link)[1]
+}
+
 resource "google_compute_instance_template" "mig_template" {
   name_prefix = "${var.mig_name}-template-"
   description = "Template to create ${var.mig_name} MIG"
@@ -35,12 +41,15 @@ resource "google_compute_instance_template" "mig_template" {
   }
 
   disk {
-    source_image = var.mig_image
-    auto_delete  = true
-    boot         = true
+    source_image = coalesce(
+      var.mig_specific_image_link,
+      data.google_compute_image.mig_image[0].self_link
+    )
+    auto_delete = true
+    boot        = true
 
     dynamic "disk_encryption_key" {
-      for_each = var.mig_disk_encryption ? [1] : []
+      for_each = var.mig_disk_encryption != null ? [1] : [0]
       content {
         kms_key_self_link = var.mig_disk_kms_key_path
       }
@@ -49,11 +58,21 @@ resource "google_compute_instance_template" "mig_template" {
 
   # Main network
   network_interface {
-    network    = google_compute_network.vpc_network.name
-    subnetwork = google_compute_subnetwork.mig_subnetwork.name
+    network = (
+      var.create_network == true ?
+      google_compute_network.vpc_network[0].name :
+      var.network_name
+    )
+    subnetwork = (
+      var.create_subnetwork == true ?
+      google_compute_subnetwork.mig_subnetwork[0].name :
+      var.subnetwork_name
+    )
   }
 
   # Additional networks
+  # for_each in dynamic block is using
+  # block name as iterator; not eachs
   dynamic "network_interface" {
     for_each = var.additional_networks
     content {
@@ -64,15 +83,16 @@ resource "google_compute_instance_template" "mig_template" {
 
   metadata = merge(
     {
-      foo = "bar"
+      enable-oslogin = "true"
     },
-    local.nginx_metadata
+    local.nginx_metadata,
+    var.mig_additional_metadata
   )
 
   metadata_startup_script = var.mig_startup_script
 
   service_account {
-    email = google_service_account.mig_service_account.email
+    email = var.mig_service_account_email
     scopes = [
       "cloud-platform"
     ]

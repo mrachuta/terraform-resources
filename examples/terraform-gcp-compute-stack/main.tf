@@ -1,5 +1,5 @@
 module "gcp_webserver_bucket" {
-  source = "./modules/gcp-webserver-bucket-module"
+  source = "../../modules/gcp-webserver-bucket-module"
 
   bucket_name         = "test-stack-nginx-bucket"
   bucket_region       = "us-central1"
@@ -31,22 +31,21 @@ module "gcp_webserver_bucket" {
 }
 
 module "gcp_mig" {
-  source = "./modules/gcp-mig-module"
+  source = "../../modules/gcp-mig-module"
 
-  project_name                    = "kr-free-2023"
-  mig_region                      = "us-central1"
-  mig_zone                        = "us-central1-b"
-  mig_service_account_id          = "test-stack-sa"
-  mig_service_account_description = "Service Account used to manage test-stack MIGs"
-  mig_name                        = "test-stack"
-  mig_description                 = "MIG with machines running nginx"
-  mig_size                        = 2
-  mig_disk_encryption             = true
-  mig_disk_kms_key_path           = "projects/kr-free-2023/locations/us-central1/keyRings/kr-free-2003-keyring/cryptoKeys/computeEngineKey"
-  nginx_bucket_name               = module.gcp_webserver_bucket.bucket_name_output
-  site_name                       = module.gcp_webserver_bucket.site_name_output
-  http_port                       = module.gcp_webserver_bucket.http_port_output
-  https_port                      = module.gcp_webserver_bucket.https_port_output
+  project_name              = "kr-free-2023"
+  mig_region                = "us-central1"
+  mig_zone                  = "us-central1-b"
+  mig_service_account_email = "test-stack-sa@kr-free-2023.iam.gserviceaccount.com"
+  mig_name                  = "test-stack"
+  mig_description           = "MIG with machines running nginx"
+  mig_size                  = 2
+  mig_disk_encryption       = true
+  mig_disk_kms_key_path     = "projects/kr-free-2023/locations/us-central1/keyRings/kr-free-2003-keyring/cryptoKeys/computeEngineKey"
+  nginx_bucket_name         = module.gcp_webserver_bucket.bucket_name_output
+  site_name                 = module.gcp_webserver_bucket.site_name_output
+  http_port                 = module.gcp_webserver_bucket.http_port_output
+  https_port                = module.gcp_webserver_bucket.https_port_output
 
   mig_additional_labels = {
     test = "true"
@@ -86,17 +85,14 @@ module "gcp_mig" {
     sudo systemctl restart nginx
     EOF
 
-  network_name    = "test-network"
-  subnetwork_name = "subnet-mig-01"
-
-  depends_on = [
-    module.gcp_webserver_bucket
-  ]
+  create_network    = true
+  network_name      = "test-network"
+  create_subnetwork = true
+  subnetwork_name   = "subnet-mig-01"
 }
 
 module "gcp_lb" {
-
-  source = "./modules/gcp-tcp-loadbalancer-module"
+  source = "../../modules/gcp-tcp-loadbalancer-module"
 
   lb_region    = "us-central1"
   lb_name      = "test-stack-lb"
@@ -105,8 +101,4 @@ module "gcp_lb" {
   network_name = module.gcp_mig.network_name_output
   http_port    = module.gcp_mig.http_port_output
   https_port   = module.gcp_mig.https_port_output
-
-  depends_on = [
-    module.gcp_mig
-  ]
 }

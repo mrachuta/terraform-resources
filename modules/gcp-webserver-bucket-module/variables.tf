@@ -43,6 +43,11 @@ variable "site_name" {
   default = "example.com"
 }
 
+variable "custom_conf_file" {
+  type    = string
+  default = null
+}
+
 variable "additional_bucket_files" {
   type = map(object(
     {
@@ -50,4 +55,5 @@ variable "additional_bucket_files" {
       bucket_file_content = string
     }
   ))
+  default = {}
 }

@@ -13,6 +13,11 @@ variable "external_lb" {
   default = true
 }
 
+variable "lb_custom_ip_address" {
+  type    = string
+  default = null
+}
+
 variable "mig_name" {
   type    = string
   default = "example-mig"

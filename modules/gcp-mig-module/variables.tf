@@ -18,14 +18,14 @@ variable "mig_machine_type" {
   default = "e2-medium"
 }
 
-variable "mig_service_account_id" {
+variable "mig_service_account_email" {
   type    = string
-  default = "example-mig-sa"
+  default = "example-mig-sa@myproject.iam.gserviceaccount.com"
 }
 
-variable "mig_service_account_description" {
-  type    = string
-  default = "Example SA created for MIG purposes"
+variable "mig_service_account_additional_roles" {
+  type    = map(string)
+  default = {}
 }
 
 variable "mig_name" {
@@ -38,9 +38,14 @@ variable "mig_description" {
   default = "Example MIG"
 }
 
-variable "mig_image" {
+variable "mig_image_family_link" {
   type    = string
-  default = "debian-cloud/debian-11"
+  default = "projects/debian-cloud/global/images/family/debian-11"
+}
+
+variable "mig_specific_image_link" {
+  type    = string
+  default = null
 }
 
 variable "mig_size" {
@@ -59,6 +64,11 @@ variable "mig_additional_tags" {
 }
 
 variable "mig_additional_labels" {
+  type    = map(string)
+  default = {}
+}
+
+variable "mig_additional_metadata" {
   type    = map(string)
   default = {}
 }
@@ -91,6 +101,16 @@ variable "http_port" {
 variable "https_port" {
   type    = number
   default = null
+}
+
+variable "create_network" {
+  type    = bool
+  default = false
+}
+
+variable "create_subnetwork" {
+  type    = bool
+  default = false
 }
 
 variable "network_name" {

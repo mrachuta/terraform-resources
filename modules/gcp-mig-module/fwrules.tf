@@ -1,5 +1,12 @@
+locals {
+  rule_prefix = length(
+    regexall("^projects/.*/global/networks/.*$", var.network_name)
+  ) > 0 ? element(split("/", var.network_name), 4) : var.network_name
+}
+
 resource "google_compute_firewall" "rule_ingress_allow_internal_all" {
-  name      = "${var.network_name}-ingres-allow-internal-all"
+  count     = var.create_network == true ? 1 : 0
+  name      = "${local.rule_prefix}-in-a-internal-all"
   direction = "INGRESS"
   network   = var.network_name
 
@@ -25,7 +32,8 @@ resource "google_compute_firewall" "rule_ingress_allow_internal_all" {
 }
 
 resource "google_compute_firewall" "rule_egress_allow_internal_all" {
-  name      = "${var.network_name}-egress-allow-internal-all"
+  count     = var.create_network == true ? 1 : 0
+  name      = "${local.rule_prefix}-eg-a-internal-all"
   direction = "EGRESS"
   network   = var.network_name
 
@@ -51,7 +59,8 @@ resource "google_compute_firewall" "rule_egress_allow_internal_all" {
 }
 
 resource "google_compute_firewall" "rule_ingress_allow_iap" {
-  name      = "${var.network_name}-ingress-allow-iap"
+  count     = var.create_network == true ? 1 : 0
+  name      = "${local.rule_prefix}-in-allow-iap"
   direction = "INGRESS"
   network   = var.network_name
 

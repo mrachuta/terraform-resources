@@ -2,7 +2,7 @@ terraform {
   required_providers {
     google = {
       source  = "hashicorp/google"
-      version = "4.51.0"
+      version = "4.68.0"
     }
   }
 
@@ -11,7 +11,7 @@ terraform {
 }
 
 provider "google" {
-  credentials = file("../kr-free-2023-3d7a95551eec.json")
+  credentials = file("../../../kr-free-2023-3d7a95551eec.json")
 
   project = "kr-free-2023"
   region  = "us-central1"

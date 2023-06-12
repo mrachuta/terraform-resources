@@ -16,6 +16,15 @@ resource "google_compute_forwarding_rule" "external_lb" {
 
 }
 
+resource "google_compute_address" "internal_lb_address" {
+  count        = var.lb_custom_ip_address == null ? 0 : 1
+  name         = "${var.lb_name}-int-forwarding-rule-ip-address"
+  subnetwork   = var.subnetwork_name
+  address_type = "INTERNAL"
+  address      = var.lb_custom_ip_address
+  region       = var.lb_region
+}
+
 resource "google_compute_forwarding_rule" "internal_lb" {
   count                 = var.external_lb == true ? 0 : 1
   name                  = "${var.lb_name}-int-forwarding-rule"
@@ -24,6 +33,10 @@ resource "google_compute_forwarding_rule" "internal_lb" {
   backend_service       = google_compute_region_backend_service.lb_backend.id
   network               = var.network_name
   subnetwork            = var.subnetwork_name
+  ip_address = coalesce(
+    google_compute_address.internal_lb_address[0].address,
+    null
+  )
 
   ports = compact([
     var.http_port,

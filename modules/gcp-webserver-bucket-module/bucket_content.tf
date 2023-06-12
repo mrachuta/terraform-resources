@@ -1,11 +1,11 @@
 resource "tls_private_key" "ca" {
-  count     = var.generate_cert ? 1 : 0
+  count     = var.generate_cert == true ? 1 : 0
   algorithm = "RSA"
   rsa_bits  = 4096
 }
 
 resource "tls_self_signed_cert" "ca" {
-  count           = var.generate_cert ? 1 : 0
+  count           = var.generate_cert == true ? 1 : 0
   private_key_pem = tls_private_key.ca[0].private_key_pem
 
   subject {
@@ -26,13 +26,13 @@ resource "tls_self_signed_cert" "ca" {
 }
 
 resource "tls_private_key" "default" {
-  count     = var.generate_cert ? 1 : 0
+  count     = var.generate_cert == true ? 1 : 0
   algorithm = "RSA"
   rsa_bits  = 4096
 }
 
 resource "tls_cert_request" "default" {
-  count           = var.generate_cert ? 1 : 0
+  count           = var.generate_cert == true ? 1 : 0
   private_key_pem = tls_private_key.default[0].private_key_pem
 
   dns_names = concat(
@@ -50,7 +50,7 @@ resource "tls_cert_request" "default" {
 }
 
 resource "tls_locally_signed_cert" "default" {
-  count              = var.generate_cert ? 1 : 0
+  count              = var.generate_cert == true ? 1 : 0
   cert_request_pem   = tls_cert_request.default[0].cert_request_pem
   ca_private_key_pem = tls_private_key.ca[0].private_key_pem
   ca_cert_pem        = tls_self_signed_cert.ca[0].cert_pem
@@ -65,6 +65,7 @@ resource "tls_locally_signed_cert" "default" {
 }
 
 data "template_file" "nginx_custom_file" {
+  count    = var.custom_conf_file != null ? 0 : 1
   template = file("${path.module}/resources/custom.conf.tpl")
   vars = {
     site_name = var.site_name
@@ -75,20 +76,27 @@ data "template_file" "nginx_custom_file" {
 }
 
 resource "google_storage_bucket_object" "custom_conf_file" {
-  name    = "custom.conf"
-  content = data.template_file.nginx_custom_file.rendered
-  bucket  = google_storage_bucket.nginx_bucket.name
+  name = "custom.conf"
+  # Bypass issues with non existing element in list
+  content = coalesce(
+    var.custom_conf_file,
+    (
+      length(data.template_file.nginx_custom_file) > 0 ?
+      data.template_file.nginx_custom_file[0].rendered : ""
+    )
+  )
+  bucket = google_storage_bucket.nginx_bucket.name
 }
 
 resource "google_storage_bucket_object" "selfsigned_cert" {
-  count   = var.generate_cert ? 1 : 0
+  count   = var.generate_cert == true ? 1 : 0
   name    = "${var.site_name}.crt"
   content = tls_locally_signed_cert.default[0].cert_pem
   bucket  = google_storage_bucket.nginx_bucket.name
 }
 
 resource "google_storage_bucket_object" "selfsigned_key" {
-  count   = var.generate_cert ? 1 : 0
+  count   = var.generate_cert == true ? 1 : 0
   name    = "${var.site_name}.key"
   content = tls_private_key.default[0].private_key_pem
   bucket  = google_storage_bucket.nginx_bucket.name
