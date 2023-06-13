@@ -14,6 +14,7 @@ data "google_compute_image" "mig_image" {
 resource "google_compute_instance_template" "mig_template" {
   name_prefix = "${var.mig_name}-template-"
   description = "Template to create ${var.mig_name} MIG"
+  region      = var.mig_region
 
   tags = concat(
     [
@@ -49,7 +50,7 @@ resource "google_compute_instance_template" "mig_template" {
     boot        = true
 
     dynamic "disk_encryption_key" {
-      for_each = var.mig_disk_encryption != null ? [1] : [0]
+      for_each = var.mig_disk_encryption == true ? [1] : []
       content {
         kms_key_self_link = var.mig_disk_kms_key_path
       }

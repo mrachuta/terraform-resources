@@ -24,13 +24,15 @@ Terraform modules and examples created for learning purposes.
 2) Create terraform service account
 3) Reconfigure variables in *main.tf* file
 4) Download JSON file with SA key
-5) Create *terraform.tf* file with provider and provider config 
+5) Update *terraform.tf* provider config:
+   - *credentials* key (path to json file)
+   - *project* key (project name)
 
 ## Usage
 
 Deploy:
 ```
-terraform deploy
+terraform apply
 ```
 Destroy:
 ```

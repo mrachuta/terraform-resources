@@ -1,10 +1,13 @@
+# Get project details from terraform.tf
+data "google_client_config" "this" {}
+
 module "gcp_webserver_bucket" {
   source = "../../modules/gcp-webserver-bucket-module"
 
   bucket_name         = "test-stack-nginx-bucket"
-  bucket_region       = "us-central1"
+  bucket_region       = data.google_client_config.this.region
   bucket_encryption   = true
-  bucket_kms_key_path = "projects/kr-free-2023/locations/us-central1/keyRings/kr-free-2003-keyring/cryptoKeys/cloudStorageKey"
+  bucket_kms_key_path = "projects/${data.google_client_config.this.project}/locations/us-central1/keyRings/${data.google_client_config.this.project}-keyring/cryptoKeys/cloudStorageKey"
   site_name           = "mysite.com"
   http_port           = 8080
   https_port          = 8443
@@ -33,15 +36,15 @@ module "gcp_webserver_bucket" {
 module "gcp_mig" {
   source = "../../modules/gcp-mig-module"
 
-  project_name              = "kr-free-2023"
-  mig_region                = "us-central1"
-  mig_zone                  = "us-central1-b"
-  mig_service_account_email = "test-stack-sa@kr-free-2023.iam.gserviceaccount.com"
+  project_name              = data.google_client_config.this.project
+  mig_region                = data.google_client_config.this.region
+  mig_zone                  = data.google_client_config.this.zone
+  mig_service_account_email = "test-stack-sa@${data.google_client_config.this.project}.iam.gserviceaccount.com"
   mig_name                  = "test-stack"
   mig_description           = "MIG with machines running nginx"
   mig_size                  = 2
   mig_disk_encryption       = true
-  mig_disk_kms_key_path     = "projects/kr-free-2023/locations/us-central1/keyRings/kr-free-2003-keyring/cryptoKeys/computeEngineKey"
+  mig_disk_kms_key_path     = "projects/${data.google_client_config.this.project}/locations/us-central1/keyRings/${data.google_client_config.this.project}-keyring/cryptoKeys/computeEngineKey"
   nginx_bucket_name         = module.gcp_webserver_bucket.bucket_name_output
   site_name                 = module.gcp_webserver_bucket.site_name_output
   http_port                 = module.gcp_webserver_bucket.http_port_output
@@ -94,7 +97,7 @@ module "gcp_mig" {
 module "gcp_lb" {
   source = "../../modules/gcp-tcp-loadbalancer-module"
 
-  lb_region    = "us-central1"
+  lb_region    = data.google_client_config.this.region
   lb_name      = "test-stack-lb"
   external_lb  = true
   mig_name     = module.gcp_mig.instance_group_output
