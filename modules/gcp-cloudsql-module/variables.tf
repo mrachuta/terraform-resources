@@ -55,10 +55,16 @@ variable "db_kms_key_path" {
   default = null
 }
 
+variable "db_enable_ssl" {
+  type    = bool
+  default = true
+}
+
 variable "db_ssl_mode" {
   type = string
-  default = "ENCRYPTED_ONLY"
+  default = "TRUSTED_CLIENT_CERTIFICATE_REQUIRED"
 }
+
 
 variable "network_name" {
   type    = string
