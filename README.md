@@ -24,9 +24,15 @@ Terraform modules and examples created for learning purposes.
 2) Create terraform service account
 3) Reconfigure variables in *main.tf* file
 4) Download JSON file with SA key
-5) Update *terraform.tf* provider config:
-   - *credentials* key (path to json file)
-   - *project* key (project name)
+5) Ensure that all required API's are enabled (especially cloudresourcemanager.googleapis.com)
+6) Expose required variables
+      ```
+      export GOOGLE_APPLICATION_CREDENTIALS="path/to/file.json"
+      export GOOGLE_PROJECT="myproject
+      export GOOGLE_REGION="us-central1"
+      export GOOGLE_ZONE="us-central1-b"
+      ```
+      or update *terraform.tf* provider config according to documentation: 
 
 ## Usage
 

@@ -2,16 +2,19 @@ terraform {
   required_providers {
     google = {
       source  = "hashicorp/google"
-      version = "4.68.0"
+      version = "5.15.0"
     }
   }
 
-  required_version = "~> 1.4.0"
+  required_version = ">= 1.4.0"
 }
 
 provider "google" {
-  credentials = file("../../../kr-free-2023-3d7a95551eec.json")
-  project     = "kr-free-2023"
-  region      = "us-central1"
-  zone        = "us-central1-b"
+  # All configured using ENV variables in .env file
+  # Run following command to export: export $(cat .env | xargs)
+  # GOOGLE_APPLICATION_CREDENTIALS="path/to/file.json"
+  # GOOGLE_PROJECT="myproject
+  # GOOGLE_REGION="us-central1"
+  # GOOGLE_ZONE="us-central1-b"
+  # 
 }

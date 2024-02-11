@@ -48,6 +48,10 @@ resource "google_sql_database_instance" "instance" {
       # TODO: move to locals and enable all input types
       private_network                               = var.network_name
       enable_private_path_for_google_cloud_services = true
+      require_ssl                                   = var.enable_ssl
+      ssl_mode                                      = (
+        var.enable_ssl != true ? null : var.ssl_mode
+      )
     }
   }
 }

@@ -59,3 +59,13 @@ variable "network_name" {
   type    = string
   default = "example-network"
 }
+
+variable "enable_ssl" {
+  type    = bool
+  default = true
+}
+
+variable "ssl_mode" {
+  type = string
+  default = "TRUSTED_CLIENT_CERTIFICATE_REQUIRED"
+}
