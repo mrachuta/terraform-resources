@@ -52,20 +52,21 @@ variable "db_encryption" {
 
 variable "db_kms_key_path" {
   type    = string
-  default = null
+  default = nullS
 }
 
-variable "network_name" {
-  type    = string
-  default = "example-network"
-}
-
-variable "enable_ssl" {
+variable "db_enable_ssl" {
   type    = bool
   default = true
 }
 
-variable "ssl_mode" {
+variable "db_ssl_mode" {
   type = string
   default = "TRUSTED_CLIENT_CERTIFICATE_REQUIRED"
+}
+
+
+variable "network_name" {
+  type    = string
+  default = "example-network"
 }
