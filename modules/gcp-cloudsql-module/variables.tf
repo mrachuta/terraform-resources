@@ -57,12 +57,12 @@ variable "db_kms_key_path" {
 
 variable "db_enable_ssl" {
   type    = bool
-  default = true
+  default = false
 }
 
 variable "db_ssl_mode" {
   type = string
-  default = "TRUSTED_CLIENT_CERTIFICATE_REQUIRED"
+  default = "ALLOW_UNENCRYPTED_AND_ENCRYPTED"
 }
 
 
