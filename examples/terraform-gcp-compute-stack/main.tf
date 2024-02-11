@@ -55,12 +55,14 @@ module "gcp_mig" {
   }
 
   mig_startup_script = <<EOF
-    #!/bin/bash
+    #!/usr/bin/env bash
+
+    set -euo pipefail
 
     sudo apt -y update
     sudo apt -y install nginx
     nginx_bucket=$(curl "http://metadata.google.internal/computeMetadata/v1/instance/attributes/nginx_bucket_name" -H "Metadata-Flavor: Google")
-    if [ "$nginx_bucket" == 'none' ]; then
+    if [[ "$nginx_bucket" == 'none' ]]; then
       echo 'nginx_bucket flag set to none...'
       vm_name=$(curl "http://metadata.google.internal/computeMetadata/v1/instance/hostname" -H "Metadata-Flavor: Google")
       int_ip=$(curl "http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/ip" -H "Metadata-Flavor: Google")
@@ -75,7 +77,7 @@ module "gcp_mig" {
       chown -R www-data:www-data /var/www/html/${module.gcp_webserver_bucket.site_name_output}
       chown www-data:www-data /etc/nginx/sites-available/custom.conf /etc/nginx/nginx.conf
       ssl_enabled=$(curl "http://metadata.google.internal/computeMetadata/v1/instance/attributes/ssl_enabled" -H "Metadata-Flavor: Google")
-      if [ "$ssl_enabled" == 'true' ]; then
+      if [[ "$ssl_enabled" == 'true' ]]; then
         echo 'ssl_enabled flag found...'
         mkdir /etc/ssl/${module.gcp_webserver_bucket.site_name_output}
         gsutil cp -R gs://${module.gcp_webserver_bucket.bucket_name_output}/*.{crt,key} /etc/ssl/${module.gcp_webserver_bucket.site_name_output}/
