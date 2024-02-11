@@ -52,7 +52,7 @@ variable "db_encryption" {
 
 variable "db_kms_key_path" {
   type    = string
-  default = nullS
+  default = null
 }
 
 variable "db_enable_ssl" {
