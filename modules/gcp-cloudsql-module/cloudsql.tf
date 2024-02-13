@@ -1,6 +1,4 @@
 resource "google_compute_global_address" "private_ip_address" {
-  provider = google-beta
-
   project       = var.project_name
   name          = "${var.db_instance_name}-ip-address"
   purpose       = "VPC_PEERING"
@@ -9,6 +7,7 @@ resource "google_compute_global_address" "private_ip_address" {
   network       = var.network_name
 }
 
+# Issues during deletion: https://github.com/hashicorp/terraform-provider-google/issues/16275
 resource "google_service_networking_connection" "private_vpc_connection" {
   provider = google-beta
 
@@ -22,8 +21,6 @@ resource "random_id" "db_name_suffix" {
 }
 
 resource "google_sql_database_instance" "instance" {
-  provider = google-beta
-
   project          = var.project_name
   name             = "${var.db_instance_name}-${random_id.db_name_suffix.hex}"
   region           = var.db_region
