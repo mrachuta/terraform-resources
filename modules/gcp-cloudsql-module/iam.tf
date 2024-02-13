@@ -1,5 +1,4 @@
 resource "google_project_service_identity" "gcp_sa_cloud_sql" {
-  provider = google-beta
   service  = "sqladmin.googleapis.com"
   project  = var.project_name
 }
