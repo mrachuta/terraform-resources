@@ -7,7 +7,9 @@ terraform {
     }
     google-beta = {
       source  = "hashicorp/google-beta"
-      version = ">= 4.80.0"
+      # Required because of: 
+      # https://github.com/hashicorp/terraform-provider-google/issues/16275#issuecomment-1825752152
+      version = "~>4"
     }
   }
 }
