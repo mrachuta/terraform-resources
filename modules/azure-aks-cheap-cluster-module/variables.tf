@@ -84,8 +84,8 @@ variable "aks_node_sku" {
 }
 
 variable "aks_enable_spot_nodepool" {
-  type = bool
-  default = false
+  type        = bool
+  default     = false
   description = "Provision nodepool with basing on cheap spot instance"
 }
 
@@ -104,6 +104,7 @@ variable "aks_spot_node_count" {
 variable "aks_scaling_details_default_node" {
   type = object({
     enabled       = bool
+    days          = list(string)
     start_time_HH = number
     start_time_MM = number
     stop_time_HH  = number
@@ -112,6 +113,7 @@ variable "aks_scaling_details_default_node" {
   })
   default = {
     enabled       = true
+    days          = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
     start_time_HH = 08
     start_time_MM = 00
     stop_time_HH  = 20
