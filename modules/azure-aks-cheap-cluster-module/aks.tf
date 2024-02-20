@@ -104,8 +104,8 @@ resource "azurerm_monitor_autoscale_setting" "aks_default_node_autoscaler" {
     recurrence {
       timezone = var.aks_scaling_details.timezone
       days     = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
-      hours    = [var.aks_scaling_details.stop_time_HH]
-      minutes  = [var.aks_scaling_details.stop_time_MM]
+      hours    = [var.aks_scaling_details_default_node.stop_time_HH]
+      minutes  = [var.aks_scaling_details_default_node.stop_time_MM]
     }
   }
 
@@ -121,8 +121,8 @@ resource "azurerm_monitor_autoscale_setting" "aks_default_node_autoscaler" {
     recurrence {
       timezone = "UTC"
       days     = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
-      hours    = [var.aks_scaling_details.start_time_HH]
-      minutes  = [var.aks_scaling_details.start_time_MM]
+      hours    = [var.aks_scaling_details_default_node.start_time_HH]
+      minutes  = [var.aks_scaling_details_default_node.start_time_MM]
     }
   }
 }
