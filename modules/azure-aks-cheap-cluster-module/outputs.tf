@@ -9,3 +9,7 @@ output "acr_address" {
 output "aks_cluster_name" {
   value = var.provision_aks == true ? azurerm_kubernetes_cluster.aks[0].name : null
 }
+
+output "aks_loadbalancer_ip" {
+  value = var.provision_aks == true ? data.azurerm_public_ip.aks_loadbalancer_ip.ip_address : null
+}

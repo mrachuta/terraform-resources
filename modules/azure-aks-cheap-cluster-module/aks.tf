@@ -66,19 +66,25 @@ resource "azurerm_kubernetes_cluster_node_pool" "aks_spot_pool" {
 
 # Get loadbalancer
 data "azurerm_lb" "aks_loadbalancer" {
-  count               = var.aks_scaling_details_default_node.enabled == true ? 1 : 0
   name                = "kubernetes"
   resource_group_name = var.aks_resources_rg_name
   depends_on = [
-    azurerm_kubernetes_cluster.aks
+    azurerm_kubernetes_cluster.aks,
+    helm_release.nginx_ingress
   ]
+}
+
+# Get loadbalancer external IP address
+data "azurerm_public_ip" "aks_loadbalancer_ip" {
+  name                = basename(data.azurerm_lb.aks_loadbalancer.frontend_ip_configuration[0].public_ip_address_id)
+  resource_group_name = var.aks_resources_rg_name
 }
 
 # Get backend pool attached to loadbalancer
 data "azurerm_lb_backend_address_pool" "aks_loadbalancer_backend" {
   count           = var.aks_scaling_details_default_node.enabled == true ? 1 : 0
   name            = "kubernetes"
-  loadbalancer_id = data.azurerm_lb.aks_loadbalancer[0].id
+  loadbalancer_id = data.azurerm_lb.aks_loadbalancer.id
 }
 
 resource "azurerm_monitor_autoscale_setting" "aks_default_node_autoscaler" {
