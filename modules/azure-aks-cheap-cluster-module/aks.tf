@@ -92,6 +92,12 @@ resource "azurerm_monitor_autoscale_setting" "aks_default_node_autoscaler" {
   name                = "${var.aks_name}DefaultAutoscaler"
   resource_group_name = azurerm_kubernetes_cluster.aks[0].node_resource_group
   location            = azurerm_kubernetes_cluster.aks[0].location
+  tags = merge(
+    {
+      "managed_by" = "terraform"
+    },
+    var.extra_tags
+  )
   # Get VMSS id basing on backend address pools
   target_resource_id = split(
     "/virtualMachines/",
