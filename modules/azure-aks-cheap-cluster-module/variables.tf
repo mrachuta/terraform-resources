@@ -101,6 +101,15 @@ variable "aks_spot_node_count" {
   description = "Node count for spot node pool"
 }
 
+variable "nginx_ingress_additional_params" {
+  type = list(object({
+    param_name = string
+    param_value = string
+  }))
+  default = []
+  description = "List of objects to declare additional ingress-nginx params"
+}
+
 variable "aks_scaling_details_default_node" {
   type = object({
     enabled       = bool
