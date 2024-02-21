@@ -2,10 +2,10 @@
 provider "helm" {
 
   kubernetes {
-    host                   = azurerm_kubernetes_cluster.aks.kube_config.0.host
-    client_certificate     = base64decode(azurerm_kubernetes_cluster.aks.kube_config.0.client_certificate)
-    client_key             = base64decode(azurerm_kubernetes_cluster.aks.kube_config.0.client_key)
-    cluster_ca_certificate = base64decode(azurerm_kubernetes_cluster.aks.kube_config.0.cluster_ca_certificate)
+    host                   = azurerm_kubernetes_cluster.aks.kube_config[0].host
+    client_certificate     = base64decode(azurerm_kubernetes_cluster.aks[0].kube_config[0].client_certificate)
+    client_key             = base64decode(azurerm_kubernetes_cluster.aks[0].kube_config[0].client_key)
+    cluster_ca_certificate = base64decode(azurerm_kubernetes_cluster.aks[0].kube_config[0].cluster_ca_certificate)
   }
 }
 
@@ -19,7 +19,7 @@ resource "helm_repository" "ingress_nginx_repo" {
 
 resource "helm_release" "nginx_ingress" {
   name       = "ingress-nginx"
-  repository = helm_repository.ingress_nginx_repo.metadata.0.name
+  repository = helm_repository.ingress_nginx_repo.metadata[0].name
   chart      = "ingress-nginx"
   namespace  = "ingress-nginx"
 
