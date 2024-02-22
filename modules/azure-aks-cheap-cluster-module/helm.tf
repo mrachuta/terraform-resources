@@ -31,6 +31,8 @@ resource "helm_release" "nginx_ingress" {
   wait             = true
   timeout          = 200
   create_namespace = true
+  recreate_pods    = true
+  atomic           = true
 
   dynamic "set" {
     for_each = var.nginx_ingress_additional_params
