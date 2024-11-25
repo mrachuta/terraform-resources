@@ -86,7 +86,7 @@ variable "aks_node_sku" {
 variable "aks_enable_spot_nodepool" {
   type        = bool
   default     = false
-  description = "Provision nodepool with basing on cheap spot instance"
+  description = "Provision additional nodepool using cheap spot instances"
 }
 
 variable "aks_spot_node_sku" {
@@ -102,14 +102,13 @@ variable "aks_spot_node_count" {
 }
 
 variable "nginx_ingress_additional_params" {
-  type = map(string)
-  default = {}
-  description = "List of strings to declare additional ingress-nginx params"
+  type        = map(string)
+  default     = {}
+  description = "Additional ingress-nginx params, to be declared during helm chart installation"
 }
 
 variable "aks_scaling_details_default_node" {
   type = object({
-    enabled       = bool
     days          = list(string)
     start_time_HH = number
     start_time_MM = number
@@ -117,14 +116,30 @@ variable "aks_scaling_details_default_node" {
     stop_time_MM  = number
     timezone      = string
   })
-  default = {
-    enabled       = true
-    days          = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
-    start_time_HH = 08
-    start_time_MM = 00
-    stop_time_HH  = 20
-    stop_time_MM  = 00
-    timezone      = "UTC"
-  }
+  default     = null
   description = "An dict that enabling autoscaling on VMSS of default node pool to reduce costs"
+}
+
+variable "contapp_env_name" {
+  type        = string
+  default     = "mycontappenv01"
+  description = "Name of Azure Container Apps environment"
+}
+
+variable "az_cli_path" {
+  type        = string
+  default     = "az"
+  description = "Command or path to call azure-cli command in your local environment"
+}
+
+variable "provisioner_arm_client_secret" {
+  type    = string
+  default = null
+  # Not required, bash is not expanding environment variables within provisioner
+  #sensitive   = true
+  validation {
+    condition     = var.provisioner_arm_client_secret != null
+    error_message = "Environment variable TF_VAR_provisioner_arm_client_secret is not set properly!"
+  }
+  description = "Service principal client secret to be used with local-exec provider"
 }
