@@ -11,5 +11,5 @@ output "aks_cluster_name" {
 }
 
 output "aks_loadbalancer_ip" {
-  value = var.provision_aks == true ? data.azurerm_public_ip.aks_loadbalancer_ip.ip_address : null
+  value = var.provision_aks == true ? data.azurerm_public_ip.aks_loadbalancer_ip[0].ip_address : null
 }
