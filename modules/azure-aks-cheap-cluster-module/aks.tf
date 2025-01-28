@@ -41,6 +41,15 @@ resource "azurerm_kubernetes_cluster" "aks" {
       max_surge                     = "10%"
       node_soak_duration_in_minutes = 0
     }
+
+    tags = merge(
+      {
+        "managed_by"        = "terraform"
+        "module-name"       = "azure-aks-cheap-cluster"
+        "default-node-pool" = "true"
+      },
+      var.extra_tags
+    )
   }
 
   identity {
@@ -49,7 +58,8 @@ resource "azurerm_kubernetes_cluster" "aks" {
 
   tags = merge(
     {
-      "managed_by" = "terraform"
+      "managed_by"  = "terraform"
+      "module-name" = "azure-aks-cheap-cluster"
     },
     var.extra_tags
   )
@@ -67,7 +77,8 @@ resource "azurerm_kubernetes_cluster_node_pool" "aks_spot_pool" {
 
   tags = merge(
     {
-      "managed_by" = "terraform"
+      "managed_by"  = "terraform"
+      "module-name" = "azure-aks-cheap-cluster"
     },
     var.extra_tags
   )
@@ -116,6 +127,13 @@ resource "azurerm_container_app_environment" "container_app_environment" {
     workload_profile_type = "Consumption"
     maximum_count         = 1
     minimum_count         = 0
+  }
+
+  # Seems to be provider issue. Block workload_profile have to be declared
+  # name and workload_profile_type arguments have to be strictly defined
+  # Even with these, terraform is always trying to re-define it from null to specified values.
+  lifecycle {
+    ignore_changes = [ workload_profile ]
   }
 }
 
@@ -270,15 +288,19 @@ data "azurerm_public_ip" "aks_loadbalancer_ip" {
   resource_group_name = var.aks_resources_rg_name
 }
 
-# Get backend pool attached to loadbalancer
-data "azurerm_lb_backend_address_pool" "aks_loadbalancer_backend" {
-  count = (
-    var.provision_aks == true &&
-    var.aks_scaling_details_default_node != null
-  ) ? 1 : 0
+# Get default's nodepool vmss
+data "azurerm_resources" "aks_default_nodepool" {
+  resource_group_name = var.aks_resources_rg_name
+  type = "Microsoft.Compute/virtualMachineScaleSets"
 
-  name            = "kubernetes"
-  loadbalancer_id = data.azurerm_lb.aks_loadbalancer[0].id
+  required_tags = merge(
+      {
+        "managed_by"        = "terraform"
+        "module-name"       = "azure-aks-cheap-cluster"
+        "default-node-pool" = "true"
+      },
+      var.extra_tags
+    )
 }
 
 resource "azurerm_monitor_autoscale_setting" "aks_default_node_autoscaler" {
@@ -293,16 +315,13 @@ resource "azurerm_monitor_autoscale_setting" "aks_default_node_autoscaler" {
 
   tags = merge(
     {
-      "managed_by" = "terraform"
+      "managed_by"  = "terraform"
+      "module-name" = "azure-aks-cheap-cluster"
     },
     var.extra_tags
   )
 
-  # Get VMSS id basing on backend pool
-  target_resource_id = split(
-    "/virtualMachines/",
-    data.azurerm_lb_backend_address_pool.aks_loadbalancer_backend[0].backend_ip_configurations[0].id
-  )[0]
+  target_resource_id = data.azurerm_resources.aks_default_nodepool.resources[0].id
 
   profile {
     name = "inactiveProfile"

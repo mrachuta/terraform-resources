@@ -13,7 +13,8 @@ resource "azurerm_container_registry" "acr" {
 
   tags = merge(
     {
-      "managed_by" = "terraform"
+      "managed_by"  = "terraform"
+      "module-name" = "azure-aks-cheap-cluster"
     },
     var.extra_tags
   )
