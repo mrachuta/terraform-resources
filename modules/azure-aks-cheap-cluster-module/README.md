@@ -8,7 +8,7 @@ Personally I am using region Central India and Standard_B4as_v2 VM (1 machine) b
 
 # Requirements
 
-No special requirements.
+*az-cli* installed in latest version
 
 # Usage
 

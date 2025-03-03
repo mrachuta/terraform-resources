@@ -174,7 +174,7 @@ resource "azurerm_container_app_job" "aks_config_job" {
           "mv kubectl /usr/local/bin/kubectl && ",
           "chmod +x /usr/local/bin/kubectl && ",
           "tdnf install helm -y && ",
-          "az login --identity -u $UAI_ID && ",
+          "az login --identity --client-id $UAI_ID && ",
           "az aks get-credentials --resource-group $RG_NAME ",
           "--name $CLUSTER_NAME --admin --overwrite-existing && ",
           "helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx && ",
@@ -207,7 +207,7 @@ resource "azurerm_container_app_job" "aks_config_job" {
       env {
         name  = "INGRESS_PARAMS"
         value = length(var.nginx_ingress_additional_params) > 0 ? join(" ", [
-          for k, v in var.nginx_ingress_additional_params : "--set ${k}=${v}"
+          for k, v in var.nginx_ingress_additional_params : "--set-string ${k}=${v}"
         ]) : ""
       }
     }

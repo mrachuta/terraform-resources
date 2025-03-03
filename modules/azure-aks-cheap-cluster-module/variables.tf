@@ -104,7 +104,7 @@ variable "aks_spot_node_count" {
 variable "nginx_ingress_additional_params" {
   type        = map(string)
   default     = {}
-  description = "Additional ingress-nginx params, to be declared during helm chart installation"
+  description = "Additional ingress-nginx params, to be declared during helm chart installation. WARNING, --set-string is used so everything will be parsed as a string."
 }
 
 variable "aks_scaling_details_default_node" {
