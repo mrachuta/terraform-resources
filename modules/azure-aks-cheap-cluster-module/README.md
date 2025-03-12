@@ -8,7 +8,17 @@ Personally I am using region Central India and Standard_B4as_v2 VM (1 machine) b
 
 # Requirements
 
-*az-cli* installed in latest version
+* *az-cli* installed in latest version
+* Registered providers:
+  ```
+  az provider register --namespace Microsoft.Storage
+  az provider register --namespace Microsoft.ContainerService
+  az provider register --namespace Microsoft.Kubernetes
+  az provider register --namespace Microsoft.ContainerRegistry
+  az provider register --namespace Microsoft.ManagedIdentity
+  az provider register --namespace Microsoft.App
+  az provider register --namespace Microsft.Insights
+  ```
 
 # Usage
 
