@@ -133,7 +133,7 @@ resource "azurerm_container_app_environment" "container_app_environment" {
   # name and workload_profile_type arguments have to be strictly defined
   # Even with these, terraform is always trying to re-define it from null to specified values.
   lifecycle {
-    ignore_changes = [ workload_profile ]
+    ignore_changes = [workload_profile]
   }
 }
 
@@ -212,10 +212,11 @@ resource "azurerm_container_app_job" "aks_config_job" {
       }
     }
   }
+
 }
 
 # local-exec provider is used to allow to handle everything (AKS provisioning and configuration)
-# within single module. When helm provider was used, there was a problem with destroy 
+# within a single module. When helm provider was used, there was a problem with destroy 
 # (chicken-and-egg problem; it was required to use terraform destroy -target first).
 resource "null_resource" "run_aks_config_job" {
   count = var.provision_aks == true ? 1 : 0
@@ -260,7 +261,12 @@ exit 1
 EOF
   }
 
-  depends_on = [azurerm_container_app_job.aks_config_job]
+  depends_on = [
+    azurerm_container_app_job.aks_config_job,
+    azurerm_kubernetes_cluster.aks,
+    azurerm_role_assignment.role_aks_cluster_admin,
+    azurerm_role_assignment.role_aks_rbac_cluster_admin
+  ]
 
   lifecycle {
     replace_triggered_by = [azurerm_container_app_job.aks_config_job[0]]
@@ -291,16 +297,18 @@ data "azurerm_public_ip" "aks_loadbalancer_ip" {
 # Get default's nodepool vmss
 data "azurerm_resources" "aks_default_nodepool" {
   resource_group_name = var.aks_resources_rg_name
-  type = "Microsoft.Compute/virtualMachineScaleSets"
+  type                = "Microsoft.Compute/virtualMachineScaleSets"
 
   required_tags = merge(
-      {
-        "managed_by"        = "terraform"
-        "module-name"       = "azure-aks-cheap-cluster"
-        "default-node-pool" = "true"
-      },
-      var.extra_tags
-    )
+    {
+      "managed_by"        = "terraform"
+      "module-name"       = "azure-aks-cheap-cluster"
+      "default-node-pool" = "true"
+    },
+    var.extra_tags
+  )
+
+  depends_on = [azurerm_kubernetes_cluster.aks]
 }
 
 resource "azurerm_monitor_autoscale_setting" "aks_default_node_autoscaler" {
@@ -356,4 +364,6 @@ resource "azurerm_monitor_autoscale_setting" "aks_default_node_autoscaler" {
       minutes  = [var.aks_scaling_details_default_node.start_time_MM]
     }
   }
+
+  depends_on = [azurerm_kubernetes_cluster.aks]
 }
